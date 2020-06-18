@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 
+	"github.com/malbbako/ng_state_ward/configs"
 	"github.com/malbbako/ng_state_ward/database"
 	"github.com/malbbako/ng_state_ward/models"
+	"github.com/malbbako/ng_state_ward/repositories"
 )
 
 func main() {
@@ -29,4 +31,8 @@ func main() {
 
 	db.AutoMigrate(&models.State{})
 	defer db.Close()
+
+	stateRepository := repositories.NewStateRepository(db)
+	route := configs.SetupRoutes(stateRepository)
+	route.Run(":8000")
 }

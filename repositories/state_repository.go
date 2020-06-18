@@ -21,3 +21,14 @@ func (r *StateRepository) Save(state *models.State) RepositoryResult {
 
 	return RepositoryResult{Result: state}
 }
+
+func (r *StateRepository) FindAll() RepositoryResult {
+	var states models.States
+	err := r.db.Find(&states).Error
+
+	if err != nil {
+		return RepositoryResult{Error: err}
+	}
+
+	return RepositoryResult{Result: states}
+}
