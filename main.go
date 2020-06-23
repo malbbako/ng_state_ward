@@ -29,10 +29,13 @@ func main() {
 
 	//Migrations
 
-	db.AutoMigrate(&models.State{})
+	db.AutoMigrate(&models.State{}, &models.LocalGovernment{})
 	defer db.Close()
 
 	stateRepository := repositories.NewStateRepository(db)
-	route := configs.SetupRoutes(stateRepository)
+	localGovernmentRepository := repositories.NewLocalGovernmentRepository(db)
+	wardRepository := repositories.NewWardRepository(db)
+
+	route := configs.SetupRoutes(stateRepository, localGovernmentRepository, wardRepository)
 	route.Run(":8000")
 }
