@@ -13,6 +13,7 @@ type LocalGovernmentRepository struct {
 }
 
 func NewLocalGovernmentRepository(db *gorm.DB) *LocalGovernmentRepository {
+
 	return &LocalGovernmentRepository{db: db}
 }
 
@@ -42,7 +43,7 @@ func (r *LocalGovernmentRepository) FindLocalGovernmentByState(stateID int, pagi
 	offset := pagination.Page * pagination.Limit
 
 	//get data with limit,offset & order
-	errFind := r.db.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort).Where(&models.LocalGovernment{StateID: stateID}).Take(&localGovernments).Error
+	errFind := r.db.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort).Where(&models.LocalGovernment{StateID: stateID}).Preload("State").Find(&localGovernments).Error
 	if errFind != nil {
 		return RepositoryResult{Error: errFind}, totalPages
 	}
@@ -82,7 +83,7 @@ func (r *LocalGovernmentRepository) FindAllLocalGovernment(pagination *dtos.Pagi
 	offset := pagination.Page * pagination.Limit
 
 	//get data with limit,offset & order
-	errFind := r.db.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort).Find(&localGovernments).Error
+	errFind := r.db.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort).Preload("State").Find(&localGovernments).Error
 	if errFind != nil {
 		return RepositoryResult{Error: errFind}, totalPages
 	}

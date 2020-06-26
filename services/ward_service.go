@@ -9,23 +9,23 @@ import (
 	"github.com/malbbako/ng_state_ward/repositories"
 )
 
-func CreateLocalGovernment(localgovernment *models.LocalGovernment, repository repositories.LocalGovernmentRepository) dtos.Response {
+func CreateWard(ward *models.Ward, repository repositories.WardRepository) dtos.Response {
 	// uuidResult, err := uuid.NewRandom()
 
 	// if err != nil {
 	// 	log.Fatalln(err)
 	// }
 	// state.ID = uuidResult.String()
-	operationResult := repository.CreateLocalGovernment(localgovernment)
+	operationResult := repository.CreateWard(ward)
 	if operationResult.Error != nil {
 		return dtos.Response{Success: false, Message: operationResult.Error.Error()}
 	}
-	data := operationResult.Result.(*models.LocalGovernment)
+	data := operationResult.Result.(*models.Ward)
 	return dtos.Response{Success: true, Data: data}
 }
 
-func FindAllLocalGovernment(repository repositories.LocalGovernmentRepository, ctx *gin.Context, pagination *dtos.Pagination) dtos.Response {
-	operationResult, totalPages := repository.FindAllLocalGovernment(pagination)
+func FindAllWard(repository repositories.WardRepository, ctx *gin.Context, pagination *dtos.Pagination) dtos.Response {
+	operationResult, totalPages := repository.FindAllWard(pagination)
 	if operationResult.Error != nil {
 		return dtos.Response{Success: false, Message: operationResult.Error.Error()}
 	}
@@ -51,36 +51,8 @@ func FindAllLocalGovernment(repository repositories.LocalGovernmentRepository, c
 	}
 	return dtos.Response{Success: true, Data: data}
 }
-func FindLocalGovernmentById(id int, repository repositories.LocalGovernmentRepository) dtos.Response {
-
-	operationResult := repository.FindLocalGovernmentById(id)
-	if operationResult.Error != nil {
-		return dtos.Response{Success: false, Message: operationResult.Error.Error()}
-	}
-
-	data := operationResult.Result.(*models.LocalGovernment)
-	return dtos.Response{Success: true, Data: data}
-}
-func UpdateLocalGovernmentById(id int, localGovernment *models.LocalGovernment, repository repositories.LocalGovernmentRepository) dtos.Response {
-
-	existingLocalGovernmentResponse := FindLocalGovernmentById(id, repository)
-	if !existingLocalGovernmentResponse.Success {
-		return existingLocalGovernmentResponse
-	}
-	existingLocalGovernment := existingLocalGovernmentResponse.Data.(*models.LocalGovernment)
-	existingLocalGovernment.Name = localGovernment.Name
-	existingLocalGovernment.Abbr = localGovernment.Abbr
-
-	operationResult := repository.CreateLocalGovernment(existingLocalGovernment)
-	if operationResult.Error != nil {
-		return dtos.Response{Success: false, Message: operationResult.Error.Error()}
-	}
-
-	return dtos.Response{Success: true, Data: operationResult.Result}
-
-}
-func FindLocalGovernmentByState(id int, repository repositories.LocalGovernmentRepository, ctx *gin.Context, pagination *dtos.Pagination) dtos.Response {
-	operationResult, totalPages := repository.FindLocalGovernmentByState(id, pagination)
+func FindWardByLocalGovernment(id int, repository repositories.WardRepository, ctx *gin.Context, pagination *dtos.Pagination) dtos.Response {
+	operationResult, totalPages := repository.FindWardByLocalgovernment(id, pagination)
 	if operationResult.Error != nil {
 		return dtos.Response{Success: false, Message: operationResult.Error.Error()}
 	}

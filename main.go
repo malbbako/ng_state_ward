@@ -29,7 +29,7 @@ func main() {
 
 	//Migrations
 
-	db.AutoMigrate(&models.State{}, &models.LocalGovernment{})
+	db.AutoMigrate(&models.State{}, &models.LocalGovernment{}, &models.Ward{})
 	defer db.Close()
 
 	stateRepository := repositories.NewStateRepository(db)

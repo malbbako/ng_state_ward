@@ -96,7 +96,10 @@ func SetupRoutes(stateRepository *repositories.StateRepository, localGovernmentR
 		ctx.JSON(code, response)
 	})
 
-	route.POST("/localgov/create", func(ctx *gin.Context) {
+	/*-----------------------------------------------------------------------------------------
+		Local Government CRU
+	-------------------------------------------------------------------------------------------*/
+	route.POST("/localgovernment/create", func(ctx *gin.Context) {
 		var localGovernment models.LocalGovernment
 
 		//validate json
@@ -119,6 +122,126 @@ func SetupRoutes(stateRepository *repositories.StateRepository, localGovernmentR
 		}
 		ctx.JSON(code, response)
 	})
+	route.GET("/localgovernment", func(ctx *gin.Context) {
 
+		//default http status code ==200
+		code := http.StatusOK
+		pagination := helpers.GeneratePaginationRequest(ctx)
+		response := services.FindAllLocalGovernment(*localGovernmentRepository, ctx, pagination)
+		if !response.Success {
+			code = http.StatusBadRequest
+		}
+		ctx.JSON(code, response)
+
+	})
+
+	route.GET("/localgovernment/show/state/:id", func(ctx *gin.Context) {
+		//default http status code ==200
+		code := http.StatusOK
+
+		id, err := strconv.Atoi(ctx.Param("id"))
+
+		if err != nil {
+
+			return
+		}
+		pagination := helpers.GeneratePaginationRequest(ctx)
+
+		response := services.FindLocalGovernmentByState(id, *localGovernmentRepository, ctx, pagination)
+		if !response.Success {
+			code = http.StatusBadRequest
+		}
+		ctx.JSON(code, response)
+	})
+	route.PUT("/localgovernment/update/:id", func(ctx *gin.Context) {
+
+		var localgovernment models.LocalGovernment
+
+		//validate json
+		err := ctx.ShouldBindJSON(&localgovernment)
+
+		if err != nil {
+			response := helpers.GenerateValidationResponse(err)
+			ctx.JSON(http.StatusBadRequest, response)
+			return
+		}
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+
+			return
+		}
+
+		code := http.StatusOK
+
+		//save state
+		response := services.UpdateLocalGovernmentById(id, &localgovernment, *localGovernmentRepository)
+
+		if !response.Success {
+			code = http.StatusBadRequest
+		}
+		ctx.JSON(code, response)
+	})
+	/*--------------------------------------------------------------------------------------
+	  WARD CRU
+	  ----------------------------------------------------------------------------------------*/
+
+	route.POST("/ward/create", func(ctx *gin.Context) {
+		var ward models.Ward
+
+		//validate json
+		err := ctx.ShouldBindJSON(&ward)
+
+		if err != nil {
+			response := helpers.GenerateValidationResponse(err)
+			ctx.JSON(http.StatusBadRequest, response)
+			return
+		}
+
+		//default http status code ==200
+		code := http.StatusOK
+
+		//save state
+		response := services.CreateWard(&ward, *wardRepository)
+
+		if !response.Success {
+			code = http.StatusBadRequest
+		}
+		ctx.JSON(code, response)
+	})
+
+	route.GET("/ward", func(ctx *gin.Context) {
+
+		//default http status code ==200
+		code := http.StatusOK
+		pagination := helpers.GeneratePaginationRequest(ctx)
+		response := services.FindAllWard(*wardRepository, ctx, pagination)
+		if !response.Success {
+			code = http.StatusBadRequest
+		}
+		ctx.JSON(code, response)
+
+	})
+
+	route.GET("/ward/show/localgovernment/:id", func(ctx *gin.Context) {
+		//default http status code ==200
+		code := http.StatusOK
+
+		id, err := strconv.Atoi(ctx.Param("id"))
+
+		if err != nil {
+
+			return
+		}
+		pagination := helpers.GeneratePaginationRequest(ctx)
+
+		response := services.FindWardByLocalGovernment(id, *wardRepository, ctx, pagination)
+		if !response.Success {
+			code = http.StatusBadRequest
+		}
+		ctx.JSON(code, response)
+	})
+	/*-------------------------------------------------------------------------------------
+		Return Endpoints
+	---------------------------------------------------------------------------------------*/
 	return route
 }
